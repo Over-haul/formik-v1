@@ -2557,8 +2557,9 @@ case-sensitive-paths-webpack-plugin@^2.1.2:
   resolved "https://registry.yarnpkg.com/case-sensitive-paths-webpack-plugin/-/case-sensitive-paths-webpack-plugin-2.1.2.tgz#c899b52175763689224571dad778742e133f0192"
 
 case@^1.2.1:
-  version "1.5.4"
-  resolved "https://registry.yarnpkg.com/case/-/case-1.5.4.tgz#b201642aae9e374feb5750d1181a76850153830c"
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/case/-/case-1.6.3.tgz#0a4386e3e9825351ca2e6216c60467ff5f1ea1c9"
+  integrity sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==
 
 caseless@~0.12.0:
   version "0.12.0"
@@ -4302,6 +4303,7 @@ flush-write-stream@^1.0.0:
 fn-name@~1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/fn-name/-/fn-name-1.0.1.tgz#de8d8a15388b33cbf2145782171f73770c6030f0"
+  integrity sha512-RRGUv72KOw6s4z27jM6xiB9JZWOoEMQ/D39AOfNdgZmvNbYnrX/ImEGc3oQLnmQaJMyzAIbqLn0Avtzc02y+yA==
 
 for-in@^1.0.1, for-in@^1.0.2:
   version "1.0.2"
@@ -7857,8 +7859,9 @@ prop-types@^15.6.1:
     object-assign "^4.1.1"
 
 property-expr@^1.2.0:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/property-expr/-/property-expr-1.3.1.tgz#53f4af8ecd3c6db00ed98b8e0f6affbe880faa0a"
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/property-expr/-/property-expr-1.5.1.tgz#22e8706894a0c8e28d58735804f6ba3a3673314f"
+  integrity sha512-CGuc0VUTGthpJXL36ydB6jnbyOf/rAHFvmVrJlH+Rg0DqqLFQGAP6hIaxD/G0OAmBJPhXDHuEJigrp0e0wFV6g==
 
 proxy-addr@~2.0.3:
   version "2.0.3"
@@ -9612,6 +9615,7 @@ to-regex@^3.0.1, to-regex@^3.0.2:
 toposort@^0.2.10:
   version "0.2.12"
   resolved "https://registry.yarnpkg.com/toposort/-/toposort-0.2.12.tgz#c7d2984f3d48c217315cc32d770888b779491e81"
+  integrity sha512-DFpH7MW6m9+UBzEb9V72mv2spNRfH0uSUQc+NauamL8Zky22OWwRZn4uvOsulircBumuGoxXcLEAv88dNYB1ww==
 
 toposort@^1.0.0:
   version "1.0.7"
@@ -9746,6 +9750,7 @@ type-is@~1.6.15, type-is@~1.6.16:
 type-name@^2.0.1:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/type-name/-/type-name-2.0.2.tgz#efe7d4123d8ac52afff7f40c7e4dec5266008fb4"
+  integrity sha512-kkgkuqR/jKdKO5oh/I2SMu2dGbLXoJq0zkdgbxaqYK+hr9S9edwVVGf+tMUFTx2gH9TN2+Zu9JZ/Njonb3cjhA==
 
 typedarray@^0.0.6:
   version "0.0.6"
@@ -9906,6 +9911,7 @@ unist-util-visit@^1.1.0:
 universal-promise@^1.0.1:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/universal-promise/-/universal-promise-1.1.0.tgz#563f9123372940839598c9d48be5ec33fa69cff1"
+  integrity sha512-BQgjM4oMH6ayEg1T7kTxSrSHyCGV2VhR+705lPTFW0QgmbVCZ2O0MMJh85NhVg9uUzpb9c6v9LtwOuTJrO8AHQ==
   dependencies:
     promise "^7.1.1"
 
@@ -10490,6 +10496,7 @@ yargs@~3.10.0:
 yup@0.21.3:
   version "0.21.3"
   resolved "https://registry.yarnpkg.com/yup/-/yup-0.21.3.tgz#46fc72b46cb58a1e70f4cb78cb645209632e193a"
+  integrity sha512-kJs8L/Wr+XoNXg+Fha40he+KFVXDEaSD0Z+0KVEUXqbUKWmWVCQ/CALL3fHlIQyRZi0xmpbpRM36OLPEZX7tGQ==
   dependencies:
     case "^1.2.1"
     fn-name "~1.0.1"

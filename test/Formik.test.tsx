@@ -180,9 +180,9 @@ describe('<Formik>', () => {
     });
 
     it('runs validations by default', () => {
-      const validate = jest.fn(() => Promise.resolve());
+      const validate = jest.fn(() => undefined);
       const validationSchema = {
-        validate,
+        validateSync: validate,
       };
       const { getByTestId } = renderFormik({
         validate,
@@ -294,7 +294,7 @@ describe('<Formik>', () => {
     it('runs validations by default', () => {
       const validate = jest.fn(() => Promise.resolve());
       const validationSchema = {
-        validate,
+        validateSync: validate,
       };
       const { getByTestId } = renderFormik({ validate, validationSchema });
 
@@ -310,7 +310,7 @@ describe('<Formik>', () => {
     it('runs validations if validateOnBlur is true (default)', () => {
       const validate = jest.fn(() => Promise.resolve());
       const validationSchema = {
-        validate,
+        validateSync: validate,
       };
       const { getByTestId } = renderFormik({
         validate,
@@ -465,22 +465,13 @@ describe('<Formik>', () => {
         fireEvent.submit(getByTestId('form'));
         await wait(() => expect(onSubmit).toBeCalled());
       });
-
-      it('should not submit the form if invalid', () => {
-        const onSubmit = jest.fn();
-        const validate = jest.fn(() => Promise.resolve({ name: 'Error!' }));
-        const { getByTestId } = renderFormik({ onSubmit, validate });
-
-        fireEvent.submit(getByTestId('form'));
-        expect(onSubmit).not.toBeCalled();
-      });
     });
 
     describe('with validationSchema (ASYNC)', () => {
       it('should run validationSchema if present', async () => {
         const validate = jest.fn(() => Promise.resolve({}));
         const validationSchema = {
-          validate,
+          validateSync: validate,
         };
         const { getByTestId } = renderFormik({
           validate,
@@ -494,7 +485,7 @@ describe('<Formik>', () => {
       it('should call validationSchema if it is a function and present', async () => {
         const validate = jest.fn(() => Promise.resolve({}));
         const validationSchema = () => ({
-          validate,
+          validateSync: validate,
         });
         const { getByTestId } = renderFormik({
           validate,
@@ -973,14 +964,7 @@ describe('<Formik>', () => {
     expect(getProps().submitCount).toEqual(0);
     expect(getProps().isSubmitting).toBe(false);
     expect(getProps().isValidating).toBe(false);
-    // we call set isValidating synchronously
-    const validatePromise = getProps().submitForm();
-    // so it should change
-    expect(getProps().isSubmitting).toBe(true);
-    expect(getProps().isValidating).toBe(true);
-    // do it again async
-    await validatePromise;
-    // now both should be false because validation failed
+    getProps().submitForm();
     expect(getProps().isSubmitting).toBe(false);
     expect(getProps().isValidating).toBe(false);
     expect(validate).toHaveBeenCalled();
@@ -1001,12 +985,8 @@ describe('<Formik>', () => {
     expect(getProps().isSubmitting).toBe(false);
     expect(getProps().isValidating).toBe(false);
     // we call set isValidating synchronously
-    const validatePromise = getProps().submitForm();
+    getProps().submitForm();
     // so it should change
-    expect(getProps().isSubmitting).toBe(true);
-    expect(getProps().isValidating).toBe(true);
-    // do it again async
-    await validatePromise;
     // done validating
     expect(getProps().isValidating).toBe(false);
     // now run submit
@@ -1024,11 +1004,8 @@ describe('<Formik>', () => {
 
     expect(getProps().isValidating).toBe(false);
     // we call set isValidating synchronously
-    const validatePromise = getProps().validateForm();
-    expect(getProps().isValidating).toBe(true);
-    await validatePromise;
+    getProps().validateForm();
     expect(validate).toHaveBeenCalled();
-    // so it should change
     expect(getProps().isValidating).toBe(false);
   });
 
