@@ -7,7 +7,6 @@ import {
   FormikTouched,
   FormikValues,
 } from './types';
-import { ObjectSchema } from 'yup';
 export declare class Formik<Values = FormikValues> extends React.Component<
   FormikConfig<Values>,
   FormikState<Values>
@@ -30,6 +29,7 @@ export declare class Formik<Values = FormikValues> extends React.Component<
     [field: string]: React.Component<any>;
   };
   validator: any;
+  validateSync: boolean;
   constructor(props: FormikConfig<Values>);
   registerField: (name: string, Comp: React.Component<any, {}, any>) => void;
   unregisterField: (name: string) => void;
@@ -42,21 +42,25 @@ export declare class Formik<Values = FormikValues> extends React.Component<
   setStatus: (status?: any) => void;
   setError: (error: any) => void;
   setSubmitting: (isSubmitting: boolean) => void;
-  validateField: (field: string) => Object;
+  validateField: (field: string) => Object | Promise<Object>;
   runSingleFieldLevelValidation: (
     field: string,
     value: string | void
-  ) => string;
-  runFieldLevelValidations(values: FormikValues): FormikErrors<Values>;
-  runValidateHandler(values: FormikValues): FormikErrors<Values>;
+  ) => string | Promise<string>;
+  runFieldLevelValidations(
+    values: FormikValues
+  ): FormikErrors<Values> | Promise<FormikErrors<Values>>;
+  runValidateHandler(
+    values: FormikValues
+  ): FormikErrors<Values> | Promise<FormikErrors<Values>>;
   runValidationSchema: (values: FormikValues) => {};
-  runValidations: (values?: FormikValues) => FormikErrors<Values>;
+  runValidations: (values?: FormikValues) => any;
   handleChange: (
     eventOrPath: string | React.ChangeEvent<any>
   ) => void | ((eventOrValue: unknown) => void);
   setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement> | undefined) => void;
-  submitForm: () => void;
+  submitForm: () => Promise<void> | undefined;
   executeSubmit: () => void;
   handleBlur: (
     eventOrPath: string | React.FocusEvent<any>
@@ -70,7 +74,7 @@ export declare class Formik<Values = FormikValues> extends React.Component<
   resetForm: (nextValues?: Values | undefined) => void;
   handleReset: () => void;
   setFormikState: (s: any, callback?: (() => void) | undefined) => void;
-  validateForm: (values: Values) => Promise<FormikErrors<Values>>;
+  validateForm: (values: Values) => Promise<any>;
   getFormikActions: () => FormikActions<Values>;
   getFormikComputedProps: () => {
     dirty: boolean;
@@ -248,6 +252,7 @@ export declare function yupToFormErrors<Values>(
 ): FormikErrors<Values>;
 export declare function validateYupSchema<T extends FormikValues>(
   values: T,
-  schema: ObjectSchema<any>,
+  schema: any,
+  sync?: boolean,
   context?: any
-): Partial<T>;
+): Promise<Partial<T>> | Partial<T>;

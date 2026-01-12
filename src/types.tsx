@@ -210,6 +210,8 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    */
   validationSchema?: any | (() => any);
 
+  useAsyncValidation?: boolean;
+
   /**
    * Validation function. Must return an error object or promise that
    * throws an error object where that object keys map to corresponding value.
