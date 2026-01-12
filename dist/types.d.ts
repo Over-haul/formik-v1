@@ -97,6 +97,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
   onReset?: (values: Values, formikActions: FormikActions<Values>) => void;
   onSubmit: (values: Values, formikActions: FormikActions<Values>) => void;
   validationSchema?: any | (() => any);
+  validationSchemaSync?: boolean;
   validate?: ((
     values: Values
   ) => void | object | Promise<FormikErrors<Values>>);
