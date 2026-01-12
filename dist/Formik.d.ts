@@ -54,15 +54,13 @@ export declare class Formik<Values = FormikValues> extends React.Component<
     values: FormikValues
   ): FormikErrors<Values> | Promise<FormikErrors<Values>>;
   runValidationSchema: (values: FormikValues) => {};
-  runValidations: (
-    values?: FormikValues
-  ) => FormikErrors<Values> | Promise<FormikErrors<Values>>;
+  runValidations: (values?: FormikValues) => any;
   handleChange: (
     eventOrPath: string | React.ChangeEvent<any>
   ) => void | ((eventOrValue: unknown) => void);
   setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement> | undefined) => void;
-  submitForm: () => any;
+  submitForm: () => Promise<void> | undefined;
   executeSubmit: () => void;
   handleBlur: (
     eventOrPath: string | React.FocusEvent<any>
@@ -76,7 +74,7 @@ export declare class Formik<Values = FormikValues> extends React.Component<
   resetForm: (nextValues?: Values | undefined) => void;
   handleReset: () => void;
   setFormikState: (s: any, callback?: (() => void) | undefined) => void;
-  validateForm: (values: Values) => any;
+  validateForm: (values: Values) => Promise<any>;
   getFormikActions: () => FormikActions<Values>;
   getFormikComputedProps: () => {
     dirty: boolean;

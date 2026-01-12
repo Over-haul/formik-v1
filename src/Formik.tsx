@@ -359,7 +359,7 @@ export class Formik<Values = FormikValues> extends React.Component<
    */
   runValidations = (
     values: FormikValues = this.state.values
-  ): FormikErrors<Values> | Promise<FormikErrors<Values>> => {
+  ): any /*FormikErrors<Values> | Promise<FormikErrors<Values>>*/ => {
     if (this.validateSync) {
       try {
         const fieldErrors = this.runFieldLevelValidations(values);
@@ -372,7 +372,7 @@ export class Formik<Values = FormikValues> extends React.Component<
           ? this.runValidateHandler(values)
           : {};
 
-        const errors = deepmerge.all<FormikErrors<Values>>(
+        const errors = deepmerge.all<any>(
           [fieldErrors, schemaErrors, handlerErrors],
           { arrayMerge }
         );
@@ -572,6 +572,7 @@ export class Formik<Values = FormikValues> extends React.Component<
         // ^^^ Make sure Formik is still mounted before calling setState
         this.setState({ isSubmitting: false });
       }
+      return undefined;
     } else {
       return (this.runValidations(this.state.values) as Promise<
         FormikErrors<Values>

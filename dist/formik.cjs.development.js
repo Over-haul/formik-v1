@@ -177,64 +177,129 @@ var Formik = (function (_super) {
             }
         };
         _this.validateField = function (field) {
-            _this.setState({ isValidating: true });
-            try {
-                return _this.runSingleFieldLevelValidation(field, getIn(_this.state.values, field));
-            }
-            catch (error) {
-                if (_this.didMount) {
-                    _this.setState({
-                        errors: setIn(_this.state.errors, field, error),
-                        isValidating: false,
-                    });
+            if (_this.validateSync) {
+                _this.setState({ isValidating: true });
+                try {
+                    return _this.runSingleFieldLevelValidation(field, getIn(_this.state.values, field));
                 }
-                return error;
+                catch (error) {
+                    if (_this.didMount) {
+                        _this.setState({
+                            errors: setIn(_this.state.errors, field, error),
+                            isValidating: false,
+                        });
+                    }
+                    return error;
+                }
+            }
+            else {
+                _this.setState({ isValidating: true });
+                return _this.runSingleFieldLevelValidation(field, getIn(_this.state.values, field)).then(function (error) {
+                    if (_this.didMount) {
+                        _this.setState({
+                            errors: setIn(_this.state.errors, field, error),
+                            isValidating: false,
+                        });
+                    }
+                    return error;
+                });
             }
         };
         _this.runSingleFieldLevelValidation = function (field, value) {
-            try {
-                return _this.fields[field].props.validate(value);
+            if (_this.validateSync) {
+                try {
+                    return _this.fields[field].props.validate(value);
+                }
+                catch (e) {
+                    return e;
+                }
             }
-            catch (e) {
-                return e;
+            else {
+                return new Promise(function (resolve) {
+                    return resolve(_this.fields[field].props.validate(value));
+                }).then(function (x) { return x; }, function (e) { return e; });
             }
         };
         _this.runValidationSchema = function (values) {
-            var validationSchema = _this.props.validationSchema;
-            var schema = isFunction(validationSchema)
-                ? validationSchema()
-                : validationSchema;
-            try {
-                validateYupSchema(values, schema);
-                return {};
+            if (_this.validateSync) {
+                var validationSchema = _this.props.validationSchema;
+                var schema = isFunction(validationSchema)
+                    ? validationSchema()
+                    : validationSchema;
+                try {
+                    validateYupSchema(values, schema, true);
+                    return {};
+                }
+                catch (err) {
+                    return yupToFormErrors(err);
+                }
             }
-            catch (err) {
-                return yupToFormErrors(err);
+            else {
+                return new Promise(function (resolve) {
+                    var validationSchema = _this.props.validationSchema;
+                    var schema = isFunction(validationSchema)
+                        ? validationSchema()
+                        : validationSchema;
+                    validateYupSchema(values, schema, false).then(function () {
+                        resolve({});
+                    }, function (err) {
+                        resolve(yupToFormErrors(err));
+                    });
+                });
             }
         };
         _this.runValidations = function (values) {
             if (values === void 0) { values = _this.state.values; }
-            try {
-                var fieldErrors = _this.runFieldLevelValidations(values);
-                var schemaErrors = _this.props.validationSchema
-                    ? _this.runValidationSchema(values)
-                    : {};
-                var handlerErrors = _this.props.validate
-                    ? _this.runValidateHandler(values)
-                    : {};
-                var errors_1 = deepmerge.all([fieldErrors, schemaErrors, handlerErrors], { arrayMerge: arrayMerge });
-                if (_this.didMount) {
-                    _this.setState(function (prevState) {
-                        if (!isEqual(prevState.errors, errors_1)) {
-                            return { errors: errors_1 };
-                        }
-                        return null;
-                    });
+            if (_this.validateSync) {
+                try {
+                    var fieldErrors = _this.runFieldLevelValidations(values);
+                    var schemaErrors = _this.props.validationSchema
+                        ? _this.runValidationSchema(values)
+                        : {};
+                    var handlerErrors = _this.props.validate
+                        ? _this.runValidateHandler(values)
+                        : {};
+                    var errors_1 = deepmerge.all([fieldErrors, schemaErrors, handlerErrors], { arrayMerge: arrayMerge });
+                    if (_this.didMount) {
+                        _this.setState(function (prevState) {
+                            if (!isEqual(prevState.errors, errors_1)) {
+                                return { errors: errors_1 };
+                            }
+                            return null;
+                        });
+                    }
+                    return errors_1;
                 }
-                return errors_1;
+                catch (e) {
+                    return e;
+                }
             }
-            catch (e) {
-                return e;
+            else {
+                if (_this.validator) {
+                    _this.validator();
+                }
+                var _a = makeCancelable(Promise.all([
+                    _this.runFieldLevelValidations(values),
+                    _this.props.validationSchema ? _this.runValidationSchema(values) : {},
+                    _this.props.validate ? _this.runValidateHandler(values) : {},
+                ]).then(function (_a) {
+                    var fieldErrors = _a[0], schemaErrors = _a[1], handlerErrors = _a[2];
+                    return deepmerge.all([fieldErrors, schemaErrors, handlerErrors], { arrayMerge: arrayMerge });
+                })), promise = _a[0], cancel = _a[1];
+                _this.validator = cancel;
+                return promise
+                    .then(function (errors) {
+                    if (_this.didMount) {
+                        _this.setState(function (prevState) {
+                            if (!isEqual(prevState.errors, errors)) {
+                                return { errors: errors };
+                            }
+                            return null;
+                        });
+                    }
+                    return errors;
+                })
+                    .catch(function (x) { return x; });
             }
         };
         _this.handleChange = function (eventOrPath) {
@@ -320,16 +385,33 @@ var Formik = (function (_super) {
                 isValidating: true,
                 submitCount: prevState.submitCount + 1,
             }); });
-            var combinedErrors = _this.runValidations(_this.state.values);
-            if (_this.didMount) {
-                _this.setState({ isValidating: false });
+            if (_this.validateSync) {
+                var combinedErrors = _this.runValidations(_this.state.values);
+                if (_this.didMount) {
+                    _this.setState({ isValidating: false });
+                }
+                var isValid = Object.keys(combinedErrors).length === 0;
+                if (isValid) {
+                    _this.executeSubmit();
+                }
+                else if (_this.didMount) {
+                    _this.setState({ isSubmitting: false });
+                }
+                return undefined;
             }
-            var isValid = Object.keys(combinedErrors).length === 0;
-            if (isValid) {
-                _this.executeSubmit();
-            }
-            else if (_this.didMount) {
-                _this.setState({ isSubmitting: false });
+            else {
+                return _this.runValidations(_this.state.values).then(function (combinedErrors) {
+                    if (_this.didMount) {
+                        _this.setState({ isValidating: false });
+                    }
+                    var isValid = Object.keys(combinedErrors).length === 0;
+                    if (isValid) {
+                        _this.executeSubmit();
+                    }
+                    else if (_this.didMount) {
+                        _this.setState({ isSubmitting: false });
+                    }
+                });
             }
         };
         _this.executeSubmit = function () {
@@ -419,11 +501,21 @@ var Formik = (function (_super) {
         };
         _this.validateForm = function (values) {
             _this.setState({ isValidating: true });
-            var errors = _this.runValidations(values);
-            if (_this.didMount) {
-                _this.setState({ isValidating: false });
+            if (_this.validateSync) {
+                var errors = _this.runValidations(values);
+                if (_this.didMount) {
+                    _this.setState({ isValidating: false });
+                }
+                return Promise.resolve(errors);
             }
-            return Promise.resolve(errors);
+            else {
+                return _this.runValidations(values).then(function (errors) {
+                    if (_this.didMount) {
+                        _this.setState({ isValidating: false });
+                    }
+                    return errors;
+                });
+            }
         };
         _this.getFormikActions = function () {
             return {
@@ -473,6 +565,10 @@ var Formik = (function (_super) {
         };
         _this.didMount = false;
         _this.fields = {};
+        _this.validateSync =
+            props.validationSchemaSync === undefined
+                ? true
+                : props.validationSchemaSync;
         _this.initialValues = props.initialValues || {};
         warning(!(props.component && props.render), 'You should not use <Formik component> and <Formik render> in the same <Formik> component; <Formik render> will be ignored');
         warning(!(props.component && props.children && !isEmptyChildren(props.children)), 'You should not use <Formik component> and <Formik children> in the same <Formik> component; <Formik children> will be ignored');
@@ -497,35 +593,82 @@ var Formik = (function (_super) {
     };
     Formik.prototype.runFieldLevelValidations = function (values) {
         var _this = this;
-        var fieldKeysWithValidation = Object.keys(this.fields).filter(function (f) {
-            return _this.fields &&
-                _this.fields[f] &&
-                _this.fields[f].props.validate &&
-                isFunction(_this.fields[f].props.validate);
-        });
-        var fieldErrorsList = fieldKeysWithValidation.map(function (f) {
-            return _this.runSingleFieldLevelValidation(f, getIn(values, f));
-        });
-        return fieldErrorsList.reduce(function (prev, curr, index) {
-            if (curr === 'DO_NOT_DELETE_YOU_WILL_BE_FIRED') {
+        if (this.validateSync) {
+            var fieldKeysWithValidation_1 = Object.keys(this.fields).filter(function (f) {
+                return _this.fields &&
+                    _this.fields[f] &&
+                    _this.fields[f].props.validate &&
+                    isFunction(_this.fields[f].props.validate);
+            });
+            var fieldErrorsList = fieldKeysWithValidation_1.map(function (f) {
+                return _this.runSingleFieldLevelValidation(f, getIn(values, f));
+            });
+            return fieldErrorsList.reduce(function (prev, curr, index) {
+                if (curr === 'DO_NOT_DELETE_YOU_WILL_BE_FIRED') {
+                    return prev;
+                }
+                if (!!curr) {
+                    prev = setIn(prev, fieldKeysWithValidation_1[index], curr);
+                }
                 return prev;
-            }
-            if (!!curr) {
-                prev = setIn(prev, fieldKeysWithValidation[index], curr);
-            }
-            return prev;
-        }, {});
+            }, {});
+        }
+        else {
+            var fieldKeysWithValidation_2 = Object.keys(this.fields).filter(function (f) {
+                return _this.fields &&
+                    _this.fields[f] &&
+                    _this.fields[f].props.validate &&
+                    isFunction(_this.fields[f].props.validate);
+            });
+            var fieldValidations = fieldKeysWithValidation_2.length > 0
+                ? fieldKeysWithValidation_2.map(function (f) {
+                    return _this.runSingleFieldLevelValidation(f, getIn(values, f));
+                })
+                : [Promise.resolve('DO_NOT_DELETE_YOU_WILL_BE_FIRED')];
+            return Promise.all(fieldValidations).then(function (fieldErrorsList) {
+                return fieldErrorsList.reduce(function (prev, curr, index) {
+                    if (curr === 'DO_NOT_DELETE_YOU_WILL_BE_FIRED') {
+                        return prev;
+                    }
+                    if (!!curr) {
+                        prev = setIn(prev, fieldKeysWithValidation_2[index], curr);
+                    }
+                    return prev;
+                }, {});
+            });
+        }
     };
     Formik.prototype.runValidateHandler = function (values) {
-        var validateResult = this.props.validate(values);
-        if (isPromise(validateResult)) {
-            return {};
+        var _this = this;
+        if (this.validateSync) {
+            var validateResult = this.props.validate(values);
+            if (isPromise(validateResult)) {
+                return {};
+            }
+            try {
+                return validateResult;
+            }
+            catch (e) {
+                return e;
+            }
         }
-        try {
-            return validateResult;
-        }
-        catch (e) {
-            return e;
+        else {
+            return new Promise(function (resolve) {
+                var maybePromisedErrors = _this.props.validate(values);
+                if (maybePromisedErrors === undefined) {
+                    resolve({});
+                }
+                else if (isPromise(maybePromisedErrors)) {
+                    maybePromisedErrors.then(function () {
+                        resolve({});
+                    }, function (errors) {
+                        resolve(errors);
+                    });
+                }
+                else {
+                    resolve(maybePromisedErrors);
+                }
+            });
         }
     };
     Formik.prototype.render = function () {
@@ -569,7 +712,8 @@ function yupToFormErrors(yupError) {
     }
     return errors;
 }
-function validateYupSchema(values, schema, context) {
+function validateYupSchema(values, schema, sync, context) {
+    if (sync === void 0) { sync = true; }
     if (context === void 0) { context = {}; }
     var validateData = {};
     for (var k in values) {
@@ -578,7 +722,7 @@ function validateYupSchema(values, schema, context) {
             validateData[key] = values[key] !== '' ? values[key] : undefined;
         }
     }
-    return schema.validateSync(validateData, {
+    return schema[sync ? 'validateSync' : 'validate'](validateData, {
         abortEarly: false,
         context: context,
     });
