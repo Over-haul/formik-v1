@@ -210,7 +210,7 @@ export interface FormikConfig<Values> extends FormikSharedConfig {
    */
   validationSchema?: any | (() => any);
 
-  validationSchemaSync?: boolean;
+  useAsyncValidation?: boolean;
 
   /**
    * Validation function. Must return an error object or promise that

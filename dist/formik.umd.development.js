@@ -4954,7 +4954,7 @@
         };
         _this.didMount = false;
         _this.fields = {};
-        _this.validateSync = props.validationSchemaSync === undefined ? true : props.validationSchemaSync;
+        _this.validateSync = !props.useAsyncValidation;
         _this.initialValues = props.initialValues || {};
         warning$2(!(props.component && props.render), 'You should not use <Formik component> and <Formik render> in the same <Formik> component; <Formik render> will be ignored');
         warning$2(!(props.component && props.children && !isEmptyChildren(props.children)), 'You should not use <Formik component> and <Formik children> in the same <Formik> component; <Formik children> will be ignored');

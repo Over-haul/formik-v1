@@ -65,10 +65,8 @@ export class Formik<Values = FormikValues> extends React.Component<
     };
     this.didMount = false;
     this.fields = {};
-    this.validateSync =
-      props.validationSchemaSync === undefined
-        ? true
-        : props.validationSchemaSync;
+    this.validateSync = !props.useAsyncValidation;
+
     this.initialValues = props.initialValues || ({} as any);
     warning(
       !(props.component && props.render),
