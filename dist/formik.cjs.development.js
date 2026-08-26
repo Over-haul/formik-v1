@@ -9,14 +9,13 @@ var React = require('react');
 var isEqual = _interopDefault(require('react-fast-compare'));
 var deepmerge = _interopDefault(require('deepmerge'));
 var hoistNonReactStatics = _interopDefault(require('hoist-non-react-statics'));
-var createContext = _interopDefault(require('create-react-context'));
 var warning = _interopDefault(require('tiny-warning'));
 var clone = _interopDefault(require('lodash/clone'));
 var toPath = _interopDefault(require('lodash/toPath'));
 var cloneDeep = _interopDefault(require('lodash/cloneDeep'));
 
 var _a;
-var FormikProvider = (_a = createContext({}), _a.Provider), FormikConsumer = _a.Consumer;
+var FormikProvider = (_a = React.createContext({}), _a.Provider), FormikConsumer = _a.Consumer;
 function connect(Comp) {
     var C = function (props) { return (React.createElement(FormikConsumer, null, function (formik) { return React.createElement(Comp, tslib_1.__assign({}, props, { formik: formik })); })); };
     var componentDisplayName = Comp.displayName ||

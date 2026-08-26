@@ -1,12 +1,13 @@
 import * as React from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
-import createContext from 'create-react-context';
 import { FormikContext } from './types';
 
 export const {
   Provider: FormikProvider,
   Consumer: FormikConsumer,
-}: React.Context<FormikContext<any>> = (createContext as any)({} as any);
+}: React.Context<FormikContext<any>> = React.createContext<FormikContext<any>>(
+  {} as any
+);
 
 /**
  * Connect any component to Formik context, and inject as a prop called `formik`;

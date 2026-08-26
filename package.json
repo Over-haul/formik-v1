@@ -22,7 +22,7 @@
     "dist"
   ],
   "peerDependencies": {
-    "react": ">=15"
+    "react": ">=16.3"
   },
   "scripts": {
     "test": "jest --env=jsdom",
@@ -41,7 +41,6 @@
     "size": "size-limit"
   },
   "dependencies": {
-    "create-react-context": "^0.2.2",
     "deepmerge": "^2.1.1",
     "hoist-non-react-statics": "^3.3.0",
     "lodash": "^4.17.14",
