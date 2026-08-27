@@ -21,9 +21,6 @@
   "files": [
     "dist"
   ],
-  "peerDependencies": {
-    "react": ">=15"
-  },
   "scripts": {
     "test": "jest --env=jsdom",
     "test:watch": "npm run test -- --watch",
@@ -41,12 +38,10 @@
     "size": "size-limit"
   },
   "dependencies": {
-    "create-react-context": "^0.2.2",
     "deepmerge": "^2.1.1",
     "hoist-non-react-statics": "^3.3.0",
-    "lodash": "^4.17.14",
-    "lodash-es": "^4.17.14",
-    "prop-types": "^15.6.1",
+    "lodash": "^4.18.1",
+    "lodash-es": "^4.18.1",
     "react-fast-compare": "^2.0.1",
     "tiny-warning": "^1.0.2",
     "tslib": "^1.9.3"
