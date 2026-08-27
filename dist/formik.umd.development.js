@@ -2146,7 +2146,7 @@
      * _.keysIn(new Foo);
      * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
      */
-    function keysIn$1(object) {
+    function keysIn(object) {
       return isArrayLike(object) ? arrayLikeKeys(object, true) : baseKeysIn(object);
     }
 
@@ -2160,7 +2160,7 @@
      * @returns {Object} Returns `object`.
      */
     function baseAssignIn(object, source) {
-      return object && copyObject(source, keysIn$1(source), object);
+      return object && copyObject(source, keysIn(source), object);
     }
 
     /** Detect free variable `exports`. */
@@ -2387,7 +2387,7 @@
      * @returns {Array} Returns the array of property names and symbols.
      */
     function getAllKeysIn(object) {
-      return baseGetAllKeys(object, keysIn$1, getSymbolsIn);
+      return baseGetAllKeys(object, keysIn, getSymbolsIn);
     }
 
     /* Built-in method references that are verified to be native. */

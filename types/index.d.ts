@@ -43,3 +43,4 @@ declare module 'deepmerge' {
 // These packages are thus cast kept as any. #yolo.
 // see @https://github.com/react-dnd/react-dnd/pull/1330 for reference
 declare module 'hoist-non-react-statics';
+declare module 'create-react-context';
