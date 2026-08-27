@@ -43,17 +43,6 @@ const buildUmd = ({ env }) => ({
     }),
     commonjs({
       include: /node_modules/,
-      namedExports: {
-        'node_modules/prop-types/index.js': [
-          'object',
-          'oneOfType',
-          'string',
-          'node',
-          'func',
-          'bool',
-          'element',
-        ],
-      },
     }),
     sourceMaps(),
     sizeSnapshot(),
